@@ -26,6 +26,7 @@ export function Setup() {
   const [endDate, setEndDate] = useState(new Date())
 
   const handleActivate = () => {
+    window.localStorage.setItem('hello', 'hi')
     dispatch(activate(totalBudget, endDate))
   }
 
@@ -36,6 +37,7 @@ export function Setup() {
   return (
     <Root>
       <Heading>Track your budget</Heading>
+      {window.localStorage.getItem('hello')}
 
       <InputContainer>
         <Label>
@@ -46,7 +48,7 @@ export function Setup() {
         </Label>
         <Input
           type="text"
-          inputmode="numeric"
+          inputMode="numeric"
           placeholder="Total Budget"
           value={totalBudget}
           onChange={(e) => {
@@ -62,11 +64,11 @@ export function Setup() {
           <IconWrapper>
             <CalendarSearch size={18} />
           </IconWrapper>
-          End Date
+          Last Day
         </Label>
         <Input
           type="date"
-          placeholder="End Date"
+          placeholder="Last Day"
           value={format(endDate, 'yyyy-MM-dd')}
           onChange={(e) => setEndDate(new Date(e.target.value))}
         />
@@ -89,6 +91,7 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
+  padding: 25px;
 `
 
 const Heading = styled.h1`

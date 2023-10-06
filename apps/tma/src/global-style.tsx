@@ -16,6 +16,11 @@ const createGlobalThemeVariables = (props: TelegramThemeColors) => css`
 `
 
 export const ThemeGlobalStyle = css`
+  #root {
+    width: 100%;
+    height: 100%;
+  }
+
   * {
     box-sizing: border-box;
     padding: 0;
@@ -24,9 +29,11 @@ export const ThemeGlobalStyle = css`
 
   html,
   body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
     background: var(--tg-theme-secondary-bg-color);
     color: var(--tg-theme-text-color);
-    padding: 15px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
       'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
       'Helvetica Neue', sans-serif;

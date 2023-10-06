@@ -3,19 +3,15 @@ import { selectIsActive, syncCurrentDate } from '@lowkey-brokey/sdk'
 import { Setup } from './pages/setup'
 import { useAppDispatch } from './use-app-dispatch'
 import { useSelector } from 'react-redux'
-import { useThemeParams, useWebApp } from '@twa.js/sdk-react'
 import { Active } from './pages/active'
+import { useHeaderColor } from './hooks/useHeaderColor'
 
 export default function App() {
   const dispatch = useAppDispatch()
-  const webApp = useWebApp()
-  const themeParams = useThemeParams()
+
+  useHeaderColor('secondary')
 
   const isActive = useSelector(selectIsActive)
-
-  useLayoutEffect(() => {
-    webApp.setHeaderColor(themeParams.state.state.secondaryBackgroundColor)
-  }, [webApp, themeParams])
 
   useLayoutEffect(() => {
     dispatch(syncCurrentDate())
