@@ -9,8 +9,16 @@ import {
   expenseAdded,
   calculationSucceeded,
   remainingDaysUpdated,
+  BrokeyState,
+  hydrate,
 } from "./slice";
 import { calculateBudgetPerDay } from "./utils/calculate-budget-per-day";
+
+export const hydrateBrokey =
+  (persistedState: BrokeyState): AppThunk =>
+  (dispatch, _getState) => {
+    dispatch(hydrate(persistedState));
+  };
 
 export const calculate =
   (totalBudget: number, end: Date, expenses: Expense[] = []): AppThunk =>

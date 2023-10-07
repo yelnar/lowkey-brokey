@@ -3,6 +3,7 @@
 export { createSlice } from '@reduxjs/toolkit'
 export type { PayloadAction } from '@reduxjs/toolkit'
 export type { AppDependencies } from './core/dependencies'
+export * from './core/brokey/slice'
 export * from './core/brokey/selectors'
 export * from './core/brokey/thunks'
 export * from './core/create-store'
