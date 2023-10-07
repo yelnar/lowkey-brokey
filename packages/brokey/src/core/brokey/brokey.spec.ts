@@ -25,7 +25,7 @@ import {
 describe("Brokey", () => {
   let store: Store;
   const currentDate = "2020-01-01";
-  const tomorrow = "2020-01-02";
+  const nextDate = "2020-01-02";
   const after30Days = "2020-01-30";
 
   let inMemoryDateService: InMemoryDateService;
@@ -142,7 +142,7 @@ describe("Brokey", () => {
   });
 
   describe("When adding an expense", () => {
-    const currentDateTime = new Date("2020-01-01T13:00:00Z").getTime();
+    const currentDateTime = new Date(`${currentDate}T13:00:00Z`).getTime();
     const expenseAmount = 20;
 
     beforeEach(() => {
@@ -175,8 +175,7 @@ describe("Brokey", () => {
       });
 
       it("does not check if calculator is not active", () => {
-        inMemoryDateService.config.currentDate = "2020-01-02";
-
+        inMemoryDateService.config.currentDate = nextDate;
         expect(selectIsActive(store.getState())).toEqual(false);
 
         store.dispatch(checkCurrentDate());
@@ -185,22 +184,22 @@ describe("Brokey", () => {
       });
 
       it("marks current date as passed if it is before actual current date", () => {
-        inMemoryDateService.config.currentDate = "2020-01-02";
+        inMemoryDateService.config.currentDate = nextDate;
         const endDate = new Date(after30Days);
         inMemoryDateService.config.length = 30;
-
         store.dispatch(activate(3000, endDate));
+
         store.dispatch(checkCurrentDate());
 
         expect(selectHasCurrentDatePassed(store.getState())).toEqual(true);
       });
 
-      it("marks current date as NOT passed if it actual current date is equal to it", () => {
+      it("marks current date as NOT passed if it equals to actual current date", () => {
         inMemoryDateService.config.currentDate = currentDate;
         const endDate = new Date(after30Days);
         inMemoryDateService.config.length = 30;
-
         store.dispatch(activate(3000, endDate));
+
         store.dispatch(checkCurrentDate());
 
         expect(selectHasCurrentDatePassed(store.getState())).toEqual(false);
@@ -208,7 +207,7 @@ describe("Brokey", () => {
     });
 
     describe("When carrying over a positive balance", () => {
-      const currentDateTime = new Date("2020-01-01T13:00:00Z").getTime();
+      const currentDateTime = new Date(`${currentDate}T13:00:00Z`).getTime();
       const expenseAmount = 60;
 
       beforeEach(() => {
@@ -223,7 +222,7 @@ describe("Brokey", () => {
 
       describe("When positive balance is spread across remaining period", () => {
         it("increases the daily budget", () => {
-          inMemoryDateService.config.currentDate = tomorrow;
+          inMemoryDateService.config.currentDate = nextDate;
           inMemoryDateService.config.length = 29;
 
           store.dispatch(syncCurrentDate());
@@ -232,7 +231,7 @@ describe("Brokey", () => {
         });
 
         it("equalizes the current balance to the new daily budget", () => {
-          inMemoryDateService.config.currentDate = tomorrow;
+          inMemoryDateService.config.currentDate = nextDate;
 
           store.dispatch(syncCurrentDate());
 
@@ -244,7 +243,7 @@ describe("Brokey", () => {
 
       describe("When positive balance increases only the current balance of the new date", () => {
         it("does not change daily budget", () => {
-          inMemoryDateService.config.currentDate = tomorrow;
+          inMemoryDateService.config.currentDate = nextDate;
 
           store.dispatch(syncCurrentDate(false));
 
@@ -252,7 +251,7 @@ describe("Brokey", () => {
         });
 
         it("increases the current balance", () => {
-          inMemoryDateService.config.currentDate = tomorrow;
+          inMemoryDateService.config.currentDate = nextDate;
 
           store.dispatch(syncCurrentDate(false));
 
@@ -262,7 +261,7 @@ describe("Brokey", () => {
     });
 
     describe("When carrying over a negative balance", () => {
-      const currentDateTime = new Date("2020-01-01T13:00:00Z").getTime();
+      const currentDateTime = new Date(`${currentDate}T13:00:00Z`).getTime();
 
       beforeEach(() => {
         const endDate = new Date(after30Days);
@@ -274,7 +273,7 @@ describe("Brokey", () => {
         expect(selectCurrentBalance(store.getState())).toEqual(-60);
         expect(selectRemainingBudget(store.getState())).toEqual(2840);
 
-        inMemoryDateService.config.currentDate = tomorrow;
+        inMemoryDateService.config.currentDate = nextDate;
         inMemoryDateService.config.length = 29;
 
         store.dispatch(syncCurrentDate());
