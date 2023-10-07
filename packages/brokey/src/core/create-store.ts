@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { brokeySlice } from './brokey/slice'
-import { userSlice } from './user/slice'
 import {
   dependencies as appDependencies,
   AppDependencies,
@@ -8,7 +7,6 @@ import {
 
 const rootReducer = combineReducers({
   brokey: brokeySlice.reducer,
-  user: userSlice.reducer,
 })
 
 export const createStore = (dependencies?: Partial<AppDependencies>) =>
