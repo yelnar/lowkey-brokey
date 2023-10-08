@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tma:dev": "pnpm --filter tma dev"
+    "dev": "pnpm brokey:build && pnpm tma:dev",
+    "build": "pnpm brokey:build && pnpm tma:build",
+    "tma:dev": "pnpm --filter tma dev",
+    "tma:build": "pnpm --filter tma build",
+    "brokey:build": "pnpm --filter @lowkey-brokey/sdk build",
+    "test": "pnpm --filter @lowkey-brokey/sdk test",
+    "test:watch": "pnpm --filter @lowkey-brokey/sdk test:watch"
   },
   "keywords": [],
   "author": "Yelnar N.",
