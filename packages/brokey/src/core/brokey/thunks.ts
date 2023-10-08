@@ -42,7 +42,7 @@ export const calculate =
 
 export const activate =
   (totalBudget: number, end: Date): AppThunk =>
-  (dispatch, getState) => {
+  (dispatch, getState, { dateService }) => {
     dispatch(calculate(totalBudget, end));
 
     const { brokey } = getState();
@@ -57,6 +57,7 @@ export const activate =
         totalBudget,
         dailyBudget,
         currentBalance: dailyBudget,
+        currentDate: dateService.currentDate,
       })
     );
   };
@@ -70,13 +71,13 @@ export const addExpense =
 export const checkCurrentDate =
   (): AppThunk =>
   (dispatch, getState, { dateService }) => {
-    const state = getState();
+    const state = getState().brokey;
 
-    if (!state.brokey.isActive) {
+    if (!state.isActive) {
       return;
     }
 
-    const { currentDate } = state.brokey;
+    const { currentDate } = state;
 
     if (dateService.currentDate === currentDate) {
       dispatch(currentDatePassed(false));
@@ -86,19 +87,33 @@ export const checkCurrentDate =
     dispatch(currentDatePassed(true));
   };
 
+export const updateCurrentDate =
+  (): AppThunk =>
+  (dispatch, _getState, { dateService }) => {
+    const currentDate = dateService.currentDate;
+    dispatch(currentDateChanged(currentDate));
+  };
+
 export const syncCurrentDate =
   (spreadCurrentBalance = true): AppThunk =>
   (dispatch, getState, { dateService }) => {
-    const currentDate = dateService.currentDate;
-    dispatch(currentDateChanged(currentDate));
+    dispatch(checkCurrentDate());
 
-    const state = getState();
+    const { isActive, hasCurrentDatePassed } = getState().brokey;
 
-    if (!state.brokey.isActive) {
+    if (!isActive || !hasCurrentDatePassed) {
       return;
     }
 
-    const { currentBalance, dailyBudget } = state.brokey;
+    dispatch(updateCurrentDate());
+
+    const {
+      currentBalance,
+      dailyBudget,
+      remainingBudget,
+      currentDate,
+      endDate,
+    } = getState().brokey;
 
     if (currentBalance > 0 && !spreadCurrentBalance) {
       dispatch(currentBalanceIncreased(dailyBudget));
@@ -106,8 +121,8 @@ export const syncCurrentDate =
     }
 
     const newDailyBudget = calculateBudgetPerDay(
-      state.brokey.remainingBudget,
-      dateService.duration(currentDate, state.brokey.endDate)
+      remainingBudget,
+      dateService.duration(currentDate, endDate)
     );
 
     dispatch(dailyBudgetUpdated(newDailyBudget));

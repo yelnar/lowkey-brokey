@@ -97,6 +97,7 @@ export const brokeySlice = createSlice({
         endDate: CanonicalDate;
         dailyBudget: number;
         currentBalance: number;
+        currentDate: CanonicalDate;
       }>
     ) => {
       state.isActive = true;
@@ -106,6 +107,8 @@ export const brokeySlice = createSlice({
       state.endDate = action.payload.endDate;
       state.dailyBudget = action.payload.dailyBudget;
       state.currentBalance = action.payload.currentBalance;
+      state.currentDate = action.payload.currentDate;
+      state.expenses = [];
     },
 
     expenseAdded: (state, action: PayloadAction<Expense>) => {

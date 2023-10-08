@@ -20,6 +20,7 @@ import {
   checkCurrentDate,
   calculate,
   countRemainingDays,
+  updateCurrentDate,
 } from "./thunks";
 
 describe("Brokey", () => {
@@ -33,7 +34,7 @@ describe("Brokey", () => {
   beforeEach(() => {
     inMemoryDateService = new InMemoryDateService({ currentDate });
     store = createStore({ dateService: inMemoryDateService });
-    store.dispatch(syncCurrentDate());
+    store.dispatch(updateCurrentDate());
   });
 
   describe("When calculating", () => {
@@ -184,11 +185,12 @@ describe("Brokey", () => {
       });
 
       it("marks current date as passed if it is before actual current date", () => {
-        inMemoryDateService.config.currentDate = nextDate;
+        inMemoryDateService.config.currentDate = currentDate;
         const endDate = new Date(after30Days);
         inMemoryDateService.config.length = 30;
         store.dispatch(activate(3000, endDate));
 
+        inMemoryDateService.config.currentDate = nextDate;
         store.dispatch(checkCurrentDate());
 
         expect(selectHasCurrentDatePassed(store.getState())).toEqual(true);
