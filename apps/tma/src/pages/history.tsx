@@ -1,9 +1,8 @@
 import { selectExpenses } from '@lowkey-brokey/sdk'
 import { useSelector } from 'react-redux'
 import { styled } from 'styled-components'
-import { BadgeCheck } from 'lucide-react'
 import { formatRelative } from 'date-fns'
-import { enUS } from 'date-fns/esm/locale'
+import { enUS } from 'date-fns/locale'
 import { useMemo } from 'react'
 
 const formatRelativeLocale = {
@@ -17,7 +16,8 @@ const formatRelativeLocale = {
 
 const locale = {
   ...enUS,
-  formatRelative: (token) => formatRelativeLocale[token],
+  formatRelative: (token: keyof typeof formatRelativeLocale) =>
+    formatRelativeLocale[token],
 }
 
 export function History() {

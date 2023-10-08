@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
+import { useStore } from 'react-redux'
 import { styled } from 'styled-components'
 import { addExpense } from '@lowkey-brokey/sdk'
 import { MainButton } from '../components/main-button'
 import { BackButton } from '../components/back-button'
 import { useAppDispatch } from '../use-app-dispatch'
+import { LocalStorage } from '../local-storage'
 
 export function Spend({ close }: { close: () => void }) {
+  const store = useStore()
   const dispatch = useAppDispatch()
+
   const [amount, setAmount] = useState('')
 
   const inputRef = useRef<HTMLInputElement>(null)
-
   const spend = () => {
     const numericAmount = Number(amount.replace(',', '.'))
     if (Number.isNaN(numericAmount)) {
@@ -18,6 +21,7 @@ export function Spend({ close }: { close: () => void }) {
     }
 
     dispatch(addExpense(numericAmount, Date.now()))
+    new LocalStorage().set('brokeyState', store.getState().brokey)
     setAmount('')
     close()
   }

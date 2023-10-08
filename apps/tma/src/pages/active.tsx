@@ -1,77 +1,56 @@
-import { useLayoutEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
-import { addDays, formatRelative } from 'date-fns'
-import { useAppDispatch } from '../use-app-dispatch'
-import {
-  checkCurrentDate,
-  selectCurrentDate,
-  selectEndDate,
-  selectHasCurrentDatePassed,
-  selectRemainingBudget,
-} from '@lowkey-brokey/sdk'
+import { useState } from 'react'
 import { styled } from 'styled-components'
 import { History } from './history'
 import { Today } from './today'
-import { MainButton } from '../components/main-button'
 import { Spend } from './spend'
 import { useHeaderColor } from '../hooks/useHeaderColor'
-import { round } from '../utils/round'
-import { enUS } from 'date-fns/esm/locale'
-
-const formatRelativeLocale = {
-  lastWeek: 'MMM d',
-  yesterday: 'MMM d',
-  today: "'End of Today'",
-  tomorrow: "'Tomorrow'",
-  nextWeek: 'MMM d',
-  other: 'MMM d',
-}
-
-const locale = {
-  ...enUS,
-  formatRelative: (token) => formatRelativeLocale[token],
-}
+import { useBackgroundColor } from '../hooks/useBackgroundColor'
+import { Cog } from 'lucide-react'
+import { Settings } from './settings'
 
 export function Active() {
-  const dispatch = useAppDispatch()
-
-  const remainingBudget = useSelector(selectRemainingBudget)
-  const endDate = useSelector(selectEndDate)
-
-  const currentDate = useSelector(selectCurrentDate)
-  const hasCurrentDatePassed = useSelector(selectHasCurrentDatePassed)
-
   const [isSpending, setSpending] = useState(false)
+  const [isConfiguring, setConfiguring] = useState(false)
 
   useHeaderColor(isSpending ? 'primary' : 'secondary')
+  useBackgroundColor(isSpending ? 'primary' : 'secondary')
 
-  useLayoutEffect(() => {
-    dispatch(checkCurrentDate())
-  }, [dispatch, currentDate])
-
-  if (hasCurrentDatePassed === undefined) {
-    return <div>Loading...</div>
+  if (isConfiguring) {
+    return (
+      <Settings
+        close={() => {
+          setConfiguring(false)
+        }}
+      />
+    )
   }
 
-  if (hasCurrentDatePassed) {
-    return <div>Transition Screen</div>
+  if (isSpending) {
+    return (
+      <Spend
+        close={() => {
+          setSpending(false)
+        }}
+      />
+    )
   }
 
-  return isSpending ? (
-    <Spend
-      close={() => {
-        console.log('close')
-        setSpending(false)
-      }}
-    />
-  ) : (
+  return (
     <Root>
       <Today />
-      <Overview>
-        {round(remainingBudget)} until{' '}
-        {formatRelative(addDays(new Date(endDate), 1), new Date(), { locale })}
-      </Overview>
-      <Button onClick={() => setSpending(true)}>Add Expense</Button>
+
+      <ButtonsContainer>
+        <Button onClick={() => setSpending(true)} fullWidth>
+          Add Expense
+        </Button>
+        <Button
+          onClick={() => {
+            setConfiguring(true)
+          }}
+        >
+          <Cog size={20} strokeWidth={2.25} />
+        </Button>
+      </ButtonsContainer>
       <History />
     </Root>
   )
@@ -83,11 +62,12 @@ const Root = styled.div`
   gap: 28px;
   width: 100%;
   height: 100%;
-  padding: 25px;
+  padding: 25px 25px 0 25px;
 `
 
-const Button = styled.button`
+const Button = styled.button<{ fullWidth?: boolean }>`
   padding: 15px;
+  max-height: 50px;
   border-radius: 12px;
   background-color: var(--tg-theme-button-color);
   color: var(--tg-theme-primary-text-color);
@@ -96,12 +76,14 @@ const Button = styled.button`
   border: none;
   outline: none;
   cursor: pointer;
+  width: ${({ fullWidth }: { fullWidth: boolean }) =>
+    fullWidth ? '100%' : 'auto'};
 `
 
-const Overview = styled.div`
+const ButtonsContainer = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  color: var(--tg-theme-hint-color);
+  gap: 8px;
 `

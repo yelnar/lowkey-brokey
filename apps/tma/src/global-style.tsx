@@ -58,7 +58,7 @@ type TelegramThemeColors = {
 }
 
 const GlobalStyle = createGlobalStyle<TelegramThemeColors>`
-  ${(props) => createGlobalThemeVariables(props)}
+  ${(props: TelegramThemeColors) => createGlobalThemeVariables(props)}
   ${normalize}
   ${ThemeGlobalStyle}
 `

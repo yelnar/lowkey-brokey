@@ -5,21 +5,18 @@ import { useAppDispatch } from './use-app-dispatch'
 import { useSelector } from 'react-redux'
 import { Active } from './pages/active'
 import { useHeaderColor } from './hooks/useHeaderColor'
+import { useBackgroundColor } from './hooks/useBackgroundColor'
 
 export default function App() {
   const dispatch = useAppDispatch()
-
-  useHeaderColor('secondary')
-
   const isActive = useSelector(selectIsActive)
 
+  useHeaderColor('secondary')
+  useBackgroundColor('secondary')
+
   useLayoutEffect(() => {
-    dispatch(syncCurrentDate())
+    dispatch(syncCurrentDate(false))
   }, [dispatch])
 
-  if (!isActive) {
-    return <Setup />
-  }
-
-  return <Active />
+  return isActive ? <Active /> : <Setup />
 }
