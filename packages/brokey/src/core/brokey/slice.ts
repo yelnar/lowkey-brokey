@@ -110,6 +110,10 @@ export const brokeySlice = createSlice({
       state.hasCompleted = false;
     },
 
+    deactivated: (state) => {
+      Object.assign(state, initialBrokeyState);
+    },
+
     expenseAdded: (state, action: PayloadAction<Expense>) => {
       state.expenses.push({ ...action.payload });
       state.currentBalance -= action.payload.amount;
@@ -148,6 +152,7 @@ export const {
   currentDateChanged,
   calculationSucceeded,
   activated,
+  deactivated,
   expenseAdded,
   dailyBudgetUpdated,
   currentBalanceIncreased,

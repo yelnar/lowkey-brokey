@@ -13,7 +13,7 @@ import { useInitData } from '@twa.js/sdk-react'
 const formatRelativeLocale = {
   lastWeek: 'MMM d',
   yesterday: 'MMM d',
-  today: "'End of Today'",
+  today: 'MMM d',
   tomorrow: "'Tomorrow'",
   nextWeek: 'MMM d',
   other: 'MMM d',

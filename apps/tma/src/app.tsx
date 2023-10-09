@@ -1,15 +1,21 @@
 import { useLayoutEffect } from 'react'
-import { selectIsActive, syncCurrentDate } from '@lowkey-brokey/sdk'
+import {
+  selectIsActive,
+  selectHasCompleted,
+  syncCurrentDate,
+} from '@lowkey-brokey/sdk'
 import { Setup } from './pages/setup'
 import { useAppDispatch } from './use-app-dispatch'
 import { useSelector } from 'react-redux'
 import { Active } from './pages/active'
+import { Completed } from './pages/completed'
 import { useHeaderColor } from './hooks/useHeaderColor'
 import { useBackgroundColor } from './hooks/useBackgroundColor'
 
 export default function App() {
   const dispatch = useAppDispatch()
   const isActive = useSelector(selectIsActive)
+  const hasCompleted = useSelector(selectHasCompleted)
 
   useHeaderColor('secondary')
   useBackgroundColor('secondary')
@@ -18,5 +24,13 @@ export default function App() {
     dispatch(syncCurrentDate(false))
   }, [dispatch])
 
-  return isActive ? <Active /> : <Setup />
+  if (!isActive) {
+    return <Setup />
+  }
+
+  if (hasCompleted) {
+    return <Completed />
+  }
+
+  return <Active />
 }

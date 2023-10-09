@@ -22,6 +22,7 @@ import {
   calculate,
   countRemainingDays,
   updateCurrentDate,
+  deactivate,
 } from "./thunks";
 
 describe("Brokey", () => {
@@ -106,7 +107,7 @@ describe("Brokey", () => {
       );
     });
 
-    it("marks brokey as active and non-completed", () => {
+    it("marks brokey as active and not completed", () => {
       const endDate = new Date(after30Days);
       inMemoryDateService.config.length = 30;
 
@@ -332,6 +333,40 @@ describe("Brokey", () => {
       inMemoryDateService.config.formattedDate = currentDate;
       store.dispatch(activate(100, endDate));
       expect(selectHasCompleted(store.getState())).toEqual(false);
+    });
+  });
+
+  describe("When deactivating", () => {
+    beforeEach(() => {
+      inMemoryDateService.config.currentDate = currentDate;
+      const endDate = new Date(currentDate);
+      inMemoryDateService.config.length = 1;
+      inMemoryDateService.config.formattedDate = currentDate;
+      store.dispatch(activate(100, endDate));
+    });
+
+    it("marks brokey as inactive and not completed", () => {
+      store.dispatch(deactivate());
+      expect(store.getState().brokey.isActive).toEqual(false);
+      expect(store.getState().brokey.hasCompleted).toEqual(false);
+    });
+
+    it("resets start date, end date, total budget, and daily budget", () => {
+      store.dispatch(deactivate());
+      expect(selectStartDate(store.getState())).toEqual("");
+      expect(selectEndDate(store.getState())).toEqual("");
+      expect(selectTotalBudget(store.getState())).toEqual(0);
+      expect(selectDailyBudget(store.getState())).toEqual(0);
+    });
+
+    it("resets remaining budget", () => {
+      store.dispatch(deactivate());
+      expect(selectRemainingBudget(store.getState())).toEqual(0);
+    });
+
+    it("resets current balance", () => {
+      store.dispatch(deactivate());
+      expect(selectCurrentBalance(store.getState())).toEqual(0);
     });
   });
 

@@ -2,6 +2,7 @@ import { AppThunk } from "../create-store";
 import { Expense } from "./models/expense";
 import {
   activated,
+  deactivated,
   currentBalanceIncreased,
   currentDateChanged,
   dailyBudgetUpdated,
@@ -63,6 +64,10 @@ export const activate =
     );
   };
 
+export const deactivate = (): AppThunk => (dispatch, _getState) => {
+  dispatch(deactivated());
+};
+
 export const addExpense =
   (amount: number, timestamp: number): AppThunk =>
   (dispatch, _getState) => {
@@ -106,7 +111,7 @@ export const syncCurrentDate =
       return;
     }
 
-    if (dateService.duration(dateService.currentDate, endDate) < 0) {
+    if (dateService.duration(dateService.currentDate, endDate) <= 0) {
       dispatch(completed());
       return;
     }
