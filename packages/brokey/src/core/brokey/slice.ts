@@ -12,6 +12,7 @@ export type BrokeyState = {
   dailyBudget: number;
   currentBalance: number;
   isActive: boolean;
+  hasCompleted: boolean;
   hasCurrentDatePassed: boolean | undefined;
 
   remainingDays: number;
@@ -47,6 +48,7 @@ const initialBrokeyState: BrokeyState = {
   dailyBudget: 0,
   currentBalance: 0,
   isActive: false,
+  hasCompleted: false,
   hasCurrentDatePassed: undefined,
 
   remainingDays: 0,
@@ -66,10 +68,6 @@ export const brokeySlice = createSlice({
   reducers: {
     hydrate: (state, action: PayloadAction<BrokeyState>) => {
       Object.assign(state, action.payload);
-    },
-
-    currentDateChanged: (state, action: PayloadAction<CanonicalDate>) => {
-      state.currentDate = action.payload;
     },
 
     calculationSucceeded: (
@@ -109,6 +107,7 @@ export const brokeySlice = createSlice({
       state.currentBalance = action.payload.currentBalance;
       state.currentDate = action.payload.currentDate;
       state.expenses = [];
+      state.hasCompleted = false;
     },
 
     expenseAdded: (state, action: PayloadAction<Expense>) => {
@@ -130,8 +129,16 @@ export const brokeySlice = createSlice({
       state.hasCurrentDatePassed = action.payload;
     },
 
+    currentDateChanged: (state, action: PayloadAction<CanonicalDate>) => {
+      state.currentDate = action.payload;
+    },
+
     remainingDaysUpdated: (state, action: PayloadAction<number>) => {
       state.remainingDays = action.payload;
+    },
+
+    completed: (state) => {
+      state.hasCompleted = true;
     },
   },
 });
@@ -146,6 +153,7 @@ export const {
   currentBalanceIncreased,
   currentDatePassed,
   remainingDaysUpdated,
+  completed,
 } = brokeySlice.actions;
 
 export default brokeySlice.reducer;

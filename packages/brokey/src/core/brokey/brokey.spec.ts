@@ -12,6 +12,7 @@ import {
   selectTotalBudget,
   selectCalculator,
   selectRemainingDays,
+  selectHasCompleted,
 } from "./selectors";
 import {
   activate,
@@ -25,6 +26,7 @@ import {
 
 describe("Brokey", () => {
   let store: Store;
+  const previousDate = "2019-12-31";
   const currentDate = "2020-01-01";
   const nextDate = "2020-01-02";
   const after30Days = "2020-01-30";
@@ -104,7 +106,7 @@ describe("Brokey", () => {
       );
     });
 
-    it("marks brokey as active", () => {
+    it("marks brokey as active and non-completed", () => {
       const endDate = new Date(after30Days);
       inMemoryDateService.config.length = 30;
 
@@ -290,6 +292,46 @@ describe("Brokey", () => {
           selectDailyBudget(store.getState())
         );
       });
+    });
+  });
+
+  describe("When budget plan finishes", () => {
+    beforeEach(() => {
+      inMemoryDateService.config.currentDate = previousDate;
+      const endDate = new Date(previousDate);
+      inMemoryDateService.config.length = 1;
+      inMemoryDateService.config.formattedDate = previousDate;
+      store.dispatch(activate(100, endDate));
+
+      inMemoryDateService.config.currentDate = currentDate;
+      inMemoryDateService.config.length = -1;
+    });
+
+    it("marks brokey as completed", () => {
+      store.dispatch(syncCurrentDate());
+      expect(selectHasCompleted(store.getState())).toEqual(true);
+    });
+
+    it("does not change currentBalance", () => {
+      store.dispatch(syncCurrentDate(false));
+      expect(selectCurrentBalance(store.getState())).toEqual(100);
+    });
+
+    it("does not change daily budget", () => {
+      store.dispatch(syncCurrentDate());
+      expect(selectDailyBudget(store.getState())).toEqual(100);
+    });
+
+    it("marks brokey as non-completed after re-activating", () => {
+      store.dispatch(syncCurrentDate());
+      expect(selectHasCompleted(store.getState())).toEqual(true);
+
+      inMemoryDateService.config.currentDate = currentDate;
+      const endDate = new Date(currentDate);
+      inMemoryDateService.config.length = 1;
+      inMemoryDateService.config.formattedDate = currentDate;
+      store.dispatch(activate(100, endDate));
+      expect(selectHasCompleted(store.getState())).toEqual(false);
     });
   });
 

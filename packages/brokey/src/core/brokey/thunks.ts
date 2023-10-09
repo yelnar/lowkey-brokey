@@ -11,6 +11,7 @@ import {
   remainingDaysUpdated,
   BrokeyState,
   hydrate,
+  completed,
 } from "./slice";
 import { calculateBudgetPerDay } from "./utils/calculate-budget-per-day";
 
@@ -99,21 +100,21 @@ export const syncCurrentDate =
   (dispatch, getState, { dateService }) => {
     dispatch(checkCurrentDate());
 
-    const { isActive, hasCurrentDatePassed } = getState().brokey;
+    const { isActive, hasCurrentDatePassed, endDate } = getState().brokey;
 
     if (!isActive || !hasCurrentDatePassed) {
       return;
     }
 
+    if (dateService.duration(dateService.currentDate, endDate) < 0) {
+      dispatch(completed());
+      return;
+    }
+
     dispatch(updateCurrentDate());
 
-    const {
-      currentBalance,
-      dailyBudget,
-      remainingBudget,
-      currentDate,
-      endDate,
-    } = getState().brokey;
+    const { currentBalance, dailyBudget, remainingBudget, currentDate } =
+      getState().brokey;
 
     if (currentBalance > 0 && !spreadCurrentBalance) {
       dispatch(currentBalanceIncreased(dailyBudget));
