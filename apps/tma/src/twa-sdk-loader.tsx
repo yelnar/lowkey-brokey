@@ -1,37 +1,45 @@
-import { PropsWithChildren, useMemo } from "react";
-import { useSDK } from "@twa.js/sdk-react";
+import { PropsWithChildren, useMemo } from 'react'
+import { useSDK } from '@twa.js/sdk-react'
+import { styled } from 'styled-components'
 
 export function TWASDKLoader({ children }: PropsWithChildren) {
-  const { didInit, components, error } = useSDK();
+  const { didInit, components, error } = useSDK()
   const errorMessage = useMemo<null | string>(() => {
     if (!error) {
-      return null;
+      return null
     }
 
-    return error instanceof Error ? error.message : "Unknown error";
-  }, [error]);
+    return error instanceof Error ? error.message : 'Unknown error'
+  }, [error])
 
   if (!didInit) {
-    return <div>SDK init function is not yet called.</div>;
+    return <Root>Loading...</Root>
   }
 
   if (error !== null) {
     return (
-      <>
-        <p>
-          SDK was unable to initialize. Probably, current application is being
-          used not in Telegram Web Apps environment.
-        </p>
+      <Root>
+        <p>Unable to initialize. You should run it as Telegram Mini App.</p>
         <blockquote>
           <p>{errorMessage}</p>
         </blockquote>
-      </>
-    );
+      </Root>
+    )
   }
 
   if (components === null) {
-    return <div>Loading..</div>;
+    return <Root>Loading...</Root>
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
+
+const Root = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--tg-theme-bg-color);
+`

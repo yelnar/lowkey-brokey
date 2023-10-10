@@ -37,11 +37,19 @@ export function Today() {
     <Root>
       <HeadingHint>Available Today</HeadingHint>
       <Heading>
-        {NumberUtils.formatAmount(currentBalance, languageCode)}
+        {NumberUtils.formatAmount(Math.max(currentBalance, 0), languageCode)}
       </Heading>
       <Overview>
-        {NumberUtils.formatAmount(remainingBudget, languageCode)} until{' '}
-        {formatRelative(addDays(new Date(endDate), 1), new Date(), { locale })}
+        {remainingBudget > 0 ? (
+          <>
+            {NumberUtils.formatAmount(remainingBudget, languageCode)} until{' '}
+            {formatRelative(addDays(new Date(endDate), 1), new Date(), {
+              locale,
+            })}
+          </>
+        ) : (
+          <>You have spent all of your budget</>
+        )}
       </Overview>
     </Root>
   )

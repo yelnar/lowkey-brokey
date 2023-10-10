@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary FallbackComponent={Fallback}>
       {/* cssVars: true */}
-      <SDKProvider initOptions={{ debug: true }}>
+      <SDKProvider initOptions={{ debug: import.meta.env.DEV }}>
         <TWASDKLoader>
           <Provider store={store}>
             <GlobalStyleWithTGColors />
