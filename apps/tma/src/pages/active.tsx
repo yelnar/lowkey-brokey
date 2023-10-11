@@ -1,17 +1,21 @@
 import { useState } from 'react'
 import { styled } from 'styled-components'
-import { History } from './history'
-import { Today } from './today'
-import { Spend } from './spend'
+import { History } from '../layout/history'
+import { Today } from '../layout/today'
+import { Spend } from '../layout/spend'
 import { useHeaderColor } from '../hooks/useHeaderColor'
 import { useBackgroundColor } from '../hooks/useBackgroundColor'
 import { Cog } from 'lucide-react'
-import { Settings } from './settings'
+import { Settings } from '../layout/settings'
+import { useTgMainButton } from '../hooks/use-tg-main-button'
+import { useTgBackButton } from '../hooks/use-tg-back-button'
 
 export function Active() {
   const [isSpending, setSpending] = useState(false)
   const [isConfiguring, setConfiguring] = useState(false)
 
+  useTgMainButton(false)
+  useTgBackButton(false)
   useHeaderColor(isSpending ? 'primary' : 'secondary')
   useBackgroundColor(isSpending ? 'primary' : 'secondary')
 

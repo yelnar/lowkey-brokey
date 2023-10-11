@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import { MainButton } from '../components/main-button'
 import { useAppDispatch } from '../use-app-dispatch'
 import { useStore } from 'react-redux'
 
 import { activate, calculate } from '@lowkey-brokey/sdk'
 
 import { LocalStorage } from '../local-storage'
-import { Activation } from './activation'
+import { Activation } from '../layout/activation'
+import { useTgMainButton } from '../hooks/use-tg-main-button'
 
 export function Setup() {
   const store = useStore()
@@ -20,21 +20,20 @@ export function Setup() {
     new LocalStorage().set('brokeyState', store.getState().brokey)
   }
 
+  useTgMainButton(true, 'START', handleActivate, totalBudget === 0)
+
   useEffect(() => {
     dispatch(calculate(totalBudget, endDate))
   }, [dispatch, totalBudget, endDate])
 
   return (
-    <>
-      <Activation
-        title={'Setup your budget'}
-        subtitle={'Choose total budget and end date'}
-        totalBudget={totalBudget}
-        endDate={endDate}
-        onBudgetChange={setTotalBudget}
-        onEndDateChange={setEndDate}
-      />
-      <MainButton text="START" onClick={handleActivate} />
-    </>
+    <Activation
+      title={'Setup your budget'}
+      subtitle={'Choose total budget and end date'}
+      totalBudget={totalBudget}
+      endDate={endDate}
+      onBudgetChange={setTotalBudget}
+      onEndDateChange={setEndDate}
+    />
   )
 }

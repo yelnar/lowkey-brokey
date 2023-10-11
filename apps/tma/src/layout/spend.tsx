@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore } from 'react-redux'
 import { styled } from 'styled-components'
 import { addExpense } from '@lowkey-brokey/sdk'
-import { MainButton } from '../components/main-button'
-import { BackButton } from '../components/back-button'
 import { useAppDispatch } from '../use-app-dispatch'
 import { LocalStorage } from '../local-storage'
+import { useTgMainButton } from '../hooks/use-tg-main-button'
+import { useTgBackButton } from '../hooks/use-tg-back-button'
 
 export function Spend({ close }: { close: () => void }) {
   const store = useStore()
@@ -26,13 +26,16 @@ export function Spend({ close }: { close: () => void }) {
     close()
   }
 
+  // TODO: Fix adding 0 amount expenses
+  useTgMainButton(true, 'SPEND', spend, amount === '')
+  useTgBackButton(true, close)
+
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
 
   return (
     <Root>
-      <BackButton onClick={close} />
       <Input
         type="text"
         value={amount}
@@ -45,7 +48,6 @@ export function Spend({ close }: { close: () => void }) {
         inputMode="decimal"
         placeholder="Enter Amount"
       />
-      <MainButton text={'SPEND'} onClick={spend} />
     </Root>
   )
 }

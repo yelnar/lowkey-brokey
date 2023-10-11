@@ -1,28 +1,20 @@
-import { useEffect } from 'react'
 import { useMainButton } from '@twa.js/sdk-react'
+import { useCallback, useEffect } from 'react'
 
-export function MainButton({
-  onClick,
-  text,
-  disabled,
-}: {
-  onClick: () => void
-  text: string
+export function useTgMainButton(
+  visible = true,
+  text?: string,
+  onClick?: () => void,
   disabled?: boolean
-}) {
+) {
   const mainButton = useMainButton()
 
   useEffect(() => {
-    mainButton.setText(text).show()
-
-    return () => {
-      mainButton.hide()
-    }
+    text && mainButton.setText(text)
   }, [mainButton, text])
 
   useEffect(() => {
-    mainButton.on('click', onClick)
-
+    onClick && mainButton.on('click', onClick)
     return () => {
       mainButton.off('click', onClick)
     }
@@ -40,5 +32,21 @@ export function MainButton({
     }
   }, [mainButton, disabled])
 
-  return null
+  useEffect(() => {
+    visible && mainButton.show()
+
+    return () => {
+      mainButton.hide()
+    }
+  }, [mainButton, visible])
+
+  const show = useCallback(() => {
+    mainButton.show()
+  }, [mainButton])
+
+  const hide = useCallback(() => {
+    mainButton.hide()
+  }, [mainButton])
+
+  return { show, hide }
 }

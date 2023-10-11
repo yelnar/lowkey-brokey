@@ -10,8 +10,8 @@ import {
 import { LocalStorage } from '../local-storage'
 import { NumberUtils } from '../utils/number-utils'
 import { Activation } from './activation'
-import { BackButton } from '../components/back-button'
-import { MainButton } from '../components/main-button'
+import { useTgMainButton } from '../hooks/use-tg-main-button'
+import { useTgBackButton } from '../hooks/use-tg-back-button'
 
 export function Settings({ close }: { close: () => void }) {
   const store = useStore()
@@ -33,26 +33,21 @@ export function Settings({ close }: { close: () => void }) {
     close()
   }
 
+  useTgMainButton(true, 'UPDATE', handleUpdateBudget, totalBudget === 0)
+  useTgBackButton(true, close)
+
   useEffect(() => {
     dispatch(calculate(totalBudget, endDate))
   }, [dispatch, totalBudget, endDate])
 
   return (
-    <>
-      <BackButton onClick={close} />
-      <Activation
-        title={'Reset your plan'}
-        subtitle="Start with a clean slate"
-        totalBudget={totalBudget}
-        endDate={endDate}
-        onBudgetChange={setTotalBudget}
-        onEndDateChange={setEndDate}
-      />
-      <MainButton
-        text="UPDATE"
-        onClick={handleUpdateBudget}
-        disabled={totalBudget === 0}
-      />
-    </>
+    <Activation
+      title={'Reset your plan'}
+      subtitle="Start with a clean slate"
+      totalBudget={totalBudget}
+      endDate={endDate}
+      onBudgetChange={setTotalBudget}
+      onEndDateChange={setEndDate}
+    />
   )
 }
