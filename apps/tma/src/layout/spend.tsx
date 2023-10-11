@@ -16,7 +16,7 @@ export function Spend({ close }: { close: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const spend = () => {
     const numericAmount = Number(amount.replace(',', '.'))
-    if (Number.isNaN(numericAmount)) {
+    if (Number.isNaN(numericAmount) || numericAmount === 0) {
       return
     }
 
@@ -26,7 +26,6 @@ export function Spend({ close }: { close: () => void }) {
     close()
   }
 
-  // TODO: Fix adding 0 amount expenses
   useTgMainButton(true, 'SPEND', spend, amount === '')
   useTgBackButton(true, close)
 
