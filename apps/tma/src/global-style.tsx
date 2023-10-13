@@ -42,9 +42,13 @@ export const ThemeGlobalStyle = css`
     padding: 0;
     background: var(--tg-theme-secondary-bg-color);
     color: var(--tg-theme-text-color);
+
+    caret-color: var(--tg-theme-button-color);
+
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
       'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
       'Helvetica Neue', sans-serif;
+
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

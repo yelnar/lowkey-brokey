@@ -48,29 +48,29 @@ export function Spend({ close }: { close: () => void }) {
           setAmount(match ?? '')
         }}
         inputMode="decimal"
-        placeholder="Enter Amount"
       />
     </Root>
   )
 }
 
 const Root = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  width: 100%;
-  height: 100%;
+  display: block;
+  height: 100vh;
   padding: 25px;
   background-color: var(--tg-theme-bg-color);
+  transition: height 0.1s ease-in-out;
 `
 
 const Input = styled.input`
+  width: 100%;
+  height: 100%;
   background-color: transparent;
   margin: 0;
   padding: 0;
   outline: none;
   border: none;
-  font-size: 48px;
+  font-size: 56px;
+  text-align: center;
   color: var(--tg-theme-text-color);
   font-weight: bold;
 
@@ -78,9 +78,5 @@ const Input = styled.input`
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     -moz-apperance: textfield;
-  }
-
-  &::-webkit-date-and-time-value {
-    text-align: left;
   }
 `
