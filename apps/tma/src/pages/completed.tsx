@@ -4,6 +4,7 @@ import { styled } from 'styled-components'
 import { NumberUtils } from '../utils/number-utils'
 import { useAppDispatch } from '../use-app-dispatch'
 import { LocalStorage } from '../local-storage'
+import { Button } from '../components/button'
 
 export function Completed() {
   const store = useStore()
@@ -53,19 +54,4 @@ const Root = styled.div`
     margin: 0;
     margin-bottom: 16px;
   }
-`
-
-const Button = styled.button<{ fullWidth?: boolean }>`
-  padding: 15px;
-  max-height: 50px;
-  border-radius: 12px;
-  background-color: var(--tg-theme-button-color);
-  color: var(--tg-theme-primary-text-color);
-  font-size: 18px;
-  font-weight: bold;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  width: ${({ fullWidth }: { fullWidth: boolean }) =>
-    fullWidth ? '100%' : 'auto'};
 `
