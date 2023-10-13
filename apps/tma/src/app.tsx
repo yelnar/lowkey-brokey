@@ -9,8 +9,8 @@ import { useAppDispatch } from './use-app-dispatch'
 import { useSelector } from 'react-redux'
 import { Active } from './pages/active'
 import { Completed } from './pages/completed'
-import { useHeaderColor } from './hooks/useHeaderColor'
-import { useBackgroundColor } from './hooks/useBackgroundColor'
+import { useHeaderColor } from './hooks/use-header-color'
+import { useBackgroundColor } from './hooks/use-background-color'
 
 export default function App() {
   const dispatch = useAppDispatch()

@@ -1,11 +1,11 @@
-import { styled, keyframes } from 'styled-components'
 import { MouseEventHandler, useCallback, useRef, useState } from 'react'
-import { useHapticFeedback } from '@twa.js/sdk-react'
 import { createPortal } from 'react-dom'
-import { Trash2 } from 'lucide-react'
-import { useAppDispatch } from '../use-app-dispatch'
-import { deleteExpense } from '@lowkey-brokey/sdk'
 import { useStore } from 'react-redux'
+import { useHapticFeedback } from '@twa.js/sdk-react'
+import { Trash2 } from 'lucide-react'
+import { styled, keyframes } from 'styled-components'
+import { deleteExpense } from '@lowkey-brokey/sdk'
+import { useAppDispatch } from '../use-app-dispatch'
 import { LocalStorage } from '../local-storage'
 import { useBlur } from '../hooks/use-blur-background'
 
@@ -57,9 +57,11 @@ export function Expense({
   }, [focus])
 
   const handleTouchEnd = useCallback(() => {
-    clearTimeout(timer.current)
-    setFocusState(FocusState.NotFocused)
-  }, [])
+    if (focusState === FocusState.Focusing) {
+      clearTimeout(timer.current)
+      setFocusState(FocusState.NotFocused)
+    }
+  }, [focusState])
 
   const handleContextMenu = useCallback<MouseEventHandler>(
     (event) => {
