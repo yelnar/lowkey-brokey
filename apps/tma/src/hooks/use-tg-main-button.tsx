@@ -33,7 +33,11 @@ export function useTgMainButton(
   }, [mainButton, disabled])
 
   useEffect(() => {
-    visible && mainButton.show()
+    if (visible) {
+      mainButton.show()
+    } else {
+      mainButton.hide()
+    }
 
     return () => {
       mainButton.hide()

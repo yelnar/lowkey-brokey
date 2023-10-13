@@ -13,7 +13,11 @@ export function useTgBackButton(visible = true, onClick?: () => void) {
   }, [backButton, onClick])
 
   useEffect(() => {
-    visible && backButton.show()
+    if (visible) {
+      backButton.show()
+    } else {
+      backButton.hide()
+    }
 
     return () => {
       backButton.hide()
