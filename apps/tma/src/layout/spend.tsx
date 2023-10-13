@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useStore } from 'react-redux'
 import { styled } from 'styled-components'
+import { useHapticFeedback } from '@twa.js/sdk-react'
 import { addExpense } from '@lowkey-brokey/sdk'
 import { useAppDispatch } from '../use-app-dispatch'
 import { LocalStorage } from '../local-storage'
@@ -10,6 +11,7 @@ import { useTgBackButton } from '../hooks/use-tg-back-button'
 export function Spend({ close }: { close: () => void }) {
   const store = useStore()
   const dispatch = useAppDispatch()
+  const haptic = useHapticFeedback()
 
   const [amount, setAmount] = useState('')
 
@@ -22,6 +24,7 @@ export function Spend({ close }: { close: () => void }) {
 
     dispatch(addExpense(numericAmount, Date.now()))
     new LocalStorage().set('brokeyState', store.getState().brokey)
+    haptic.impactOccurred('soft')
     setAmount('')
     close()
   }

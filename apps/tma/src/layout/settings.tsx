@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { useAppDispatch } from '../use-app-dispatch'
 import { useSelector, useStore } from 'react-redux'
+import { useHapticFeedback } from '@twa.js/sdk-react'
 import {
   activate,
   calculate,
   selectEndDate,
   selectRemainingBudget,
 } from '@lowkey-brokey/sdk'
+import { useAppDispatch } from '../use-app-dispatch'
 import { LocalStorage } from '../local-storage'
 import { NumberUtils } from '../utils/number-utils'
 import { Activation } from './activation'
@@ -16,6 +17,7 @@ import { useTgBackButton } from '../hooks/use-tg-back-button'
 export function Settings({ close }: { close: () => void }) {
   const store = useStore()
   const dispatch = useAppDispatch()
+  const haptic = useHapticFeedback()
 
   const currentEndDate = useSelector(selectEndDate)
   const currentRemainingBudget = useSelector(selectRemainingBudget)
@@ -30,6 +32,7 @@ export function Settings({ close }: { close: () => void }) {
   const handleUpdateBudget = () => {
     dispatch(activate(totalBudget, endDate))
     new LocalStorage().set('brokeyState', store.getState().brokey)
+    haptic.impactOccurred('soft')
     close()
   }
 

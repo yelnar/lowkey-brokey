@@ -9,7 +9,6 @@ import { useAppDispatch } from './use-app-dispatch'
 import { useSelector } from 'react-redux'
 import { Active } from './pages/active'
 import { Completed } from './pages/completed'
-import { useHeaderColor } from './hooks/use-header-color'
 import { useBackgroundColor } from './hooks/use-background-color'
 
 export default function App() {
@@ -17,7 +16,6 @@ export default function App() {
   const isActive = useSelector(selectIsActive)
   const hasCompleted = useSelector(selectHasCompleted)
 
-  useHeaderColor('secondary')
   useBackgroundColor('secondary')
 
   useLayoutEffect(() => {

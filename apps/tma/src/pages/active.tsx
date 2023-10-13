@@ -3,7 +3,6 @@ import { styled } from 'styled-components'
 import { History } from '../layout/history'
 import { Today } from '../layout/today'
 import { Spend } from '../layout/spend'
-import { useHeaderColor } from '../hooks/use-header-color'
 import { useBackgroundColor } from '../hooks/use-background-color'
 import { Cog } from 'lucide-react'
 import { Settings } from '../layout/settings'
@@ -16,7 +15,6 @@ export function Active() {
 
   useTgMainButton(false)
   useTgBackButton(false)
-  useHeaderColor(isSpending ? 'primary' : 'secondary')
   useBackgroundColor(isSpending ? 'primary' : 'secondary')
 
   if (isConfiguring) {
