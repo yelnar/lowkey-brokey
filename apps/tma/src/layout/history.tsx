@@ -1,9 +1,10 @@
-import { selectExpenses } from '@lowkey-brokey/sdk'
+import { useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { styled } from 'styled-components'
 import { formatRelative } from 'date-fns'
 import { enUS } from 'date-fns/locale'
-import { useMemo } from 'react'
+import { selectExpenses } from '@lowkey-brokey/sdk'
+import { Expense } from './expense'
 
 const formatRelativeLocale = {
   lastWeek: "MMM d',' HH':'mm",
@@ -37,10 +38,7 @@ export function History() {
   return (
     <Root>
       {formattedExpenses.map((expense) => (
-        <Item key={expense.timestamp}>
-          <DateTime>{expense.datetime}</DateTime>
-          <Amount>{expense.amount}</Amount>
-        </Item>
+        <Expense key={expense.timestamp} expense={expense} />
       ))}
     </Root>
   )
@@ -51,22 +49,5 @@ const Root = styled.div`
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-`
-
-const Item = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-radius: 10px;
-  background-color: var(--tg-theme-bg-color);
-`
-
-const DateTime = styled.div`
-  font-size: 16px;
-  color: var(--tg-theme-hint-color);
-`
-const Amount = styled.div`
-  font-weight: bold;
-  font-size: 18px;
+  padding-bottom: 20px;
 `

@@ -25,6 +25,14 @@ export const ThemeGlobalStyle = css`
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
   }
 
   html,
@@ -44,6 +52,15 @@ export const ThemeGlobalStyle = css`
   code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
       monospace;
+  }
+
+  #root {
+    transition: filter 0.2s ease-out;
+  }
+
+  #root.blur {
+    filter: blur(10px);
+    pointer-events: none;
   }
 `
 
