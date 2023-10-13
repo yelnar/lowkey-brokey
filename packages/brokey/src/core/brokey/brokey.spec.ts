@@ -23,6 +23,7 @@ import {
   countRemainingDays,
   updateCurrentDate,
   deactivate,
+  deleteExpense,
 } from "./thunks";
 
 describe("Brokey", () => {
@@ -169,6 +170,68 @@ describe("Brokey", () => {
       expect(selectExpenses(store.getState())).toEqual([
         { amount: 20, timestamp: currentDateTime },
       ]);
+    });
+  });
+
+  describe("When deleting an expense", () => {
+    beforeEach(() => {
+      const endDate = new Date(after30Days);
+      inMemoryDateService.config.length = 30;
+
+      store.dispatch(activate(3000, endDate));
+      store.dispatch(
+        addExpense(10, new Date(`${currentDate}T13:00:00Z`).getTime())
+      );
+      store.dispatch(
+        addExpense(20, new Date(`${currentDate}T13:15:00Z`).getTime())
+      );
+      store.dispatch(
+        addExpense(30, new Date(`${currentDate}T13:30:00Z`).getTime())
+      );
+    });
+
+    it("adds the expense amount to remaining budget", () => {
+      store.dispatch(
+        deleteExpense(new Date(`${currentDate}T13:15:00Z`).getTime())
+      );
+      expect(selectRemainingBudget(store.getState())).toEqual(2960);
+    });
+
+    it("adds the expense amount to current balance", () => {
+      store.dispatch(
+        deleteExpense(new Date(`${currentDate}T13:15:00Z`).getTime())
+      );
+      expect(selectCurrentBalance(store.getState())).toEqual(60);
+    });
+
+    it("removes deleted expense from the expenses", () => {
+      store.dispatch(
+        deleteExpense(new Date(`${currentDate}T13:15:00Z`).getTime())
+      );
+      expect(selectExpenses(store.getState())).toEqual([
+        {
+          amount: 10,
+          timestamp: new Date(`${currentDate}T13:00:00Z`).getTime(),
+        },
+        {
+          amount: 30,
+          timestamp: new Date(`${currentDate}T13:30:00Z`).getTime(),
+        },
+      ]);
+    });
+
+    it("does not change remaining budget if expense does not exist", () => {
+      store.dispatch(
+        deleteExpense(new Date(`${currentDate}T13:45:00Z`).getTime())
+      );
+      expect(selectRemainingBudget(store.getState())).toEqual(2940);
+    });
+
+    it("does not change current balance if expense does not exist", () => {
+      store.dispatch(
+        deleteExpense(new Date(`${currentDate}T13:45:00Z`).getTime())
+      );
+      expect(selectCurrentBalance(store.getState())).toEqual(40);
     });
   });
 

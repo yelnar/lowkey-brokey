@@ -13,6 +13,7 @@ import {
   BrokeyState,
   hydrate,
   completed,
+  expenseDeleted,
 } from "./slice";
 import { calculateBudgetPerDay } from "./utils/calculate-budget-per-day";
 
@@ -91,6 +92,12 @@ export const checkCurrentDate =
     }
 
     dispatch(currentDatePassed(true));
+  };
+
+export const deleteExpense =
+  (timestamp: number): AppThunk =>
+  (dispatch, _getState) => {
+    dispatch(expenseDeleted({ timestamp }));
   };
 
 export const updateCurrentDate =

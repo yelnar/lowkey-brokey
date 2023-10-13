@@ -120,6 +120,22 @@ export const brokeySlice = createSlice({
       state.remainingBudget -= action.payload.amount;
     },
 
+    expenseDeleted: (state, action: PayloadAction<{ timestamp: number }>) => {
+      const deletedExpense = state.expenses.find(
+        (expense) => expense.timestamp === action.payload.timestamp
+      );
+
+      if (!deletedExpense) {
+        return;
+      }
+
+      state.expenses = state.expenses.filter(
+        (expense) => expense.timestamp !== action.payload.timestamp
+      );
+      state.currentBalance += deletedExpense.amount || 0;
+      state.remainingBudget += deletedExpense.amount || 0;
+    },
+
     dailyBudgetUpdated: (state, action: PayloadAction<number>) => {
       state.dailyBudget = action.payload;
       state.currentBalance = action.payload;
@@ -154,6 +170,7 @@ export const {
   activated,
   deactivated,
   expenseAdded,
+  expenseDeleted,
   dailyBudgetUpdated,
   currentBalanceIncreased,
   currentDatePassed,
