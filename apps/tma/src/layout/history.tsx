@@ -1,10 +1,12 @@
-import { useMemo } from 'react'
-import { useSelector } from 'react-redux'
+import { useCallback, useMemo } from 'react'
+import { useSelector, useStore } from 'react-redux'
 import { styled } from 'styled-components'
 import { formatRelative } from 'date-fns'
 import { enUS } from 'date-fns/locale'
-import { selectExpenses } from '@lowkey-brokey/sdk'
+import { deleteExpense, selectExpenses } from '@lowkey-brokey/sdk'
 import { Expense } from './expense'
+import { useAppDispatch } from '../use-app-dispatch'
+import { LocalStorage } from '../local-storage'
 
 const formatRelativeLocale = {
   lastWeek: "MMM d',' HH':'mm",
@@ -22,6 +24,8 @@ const locale = {
 }
 
 export function History() {
+  const store = useStore()
+  const dispatch = useAppDispatch()
   const expenses = useSelector(selectExpenses)
 
   const formattedExpenses = useMemo(() => {
@@ -35,10 +39,22 @@ export function History() {
       }))
   }, [expenses])
 
+  const handleDelete = useCallback(
+    (expenseTimestamp: number) => {
+      dispatch(deleteExpense(expenseTimestamp))
+      new LocalStorage().set('brokeyState', store.getState().brokey)
+    },
+    [store, dispatch]
+  )
+
   return (
     <Root>
       {formattedExpenses.map((expense) => (
-        <Expense key={expense.timestamp} expense={expense} />
+        <Expense
+          key={expense.timestamp}
+          expense={expense}
+          onDelete={handleDelete}
+        />
       ))}
     </Root>
   )

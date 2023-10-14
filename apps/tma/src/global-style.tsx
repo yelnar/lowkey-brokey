@@ -15,6 +15,8 @@ const createGlobalThemeVariables = (props: TelegramThemeColors) => css`
   }
 `
 
+export const BlurDurationInMs = 200
+
 export const ThemeGlobalStyle = css`
   #root {
     width: 100%;
@@ -59,7 +61,7 @@ export const ThemeGlobalStyle = css`
   }
 
   #root {
-    transition: filter 0.2s ease-out;
+    transition: filter ${BlurDurationInMs}ms ease-out;
   }
 
   #root.blur {

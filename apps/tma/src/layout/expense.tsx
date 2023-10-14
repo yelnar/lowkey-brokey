@@ -1,75 +1,105 @@
-import { MouseEventHandler, useCallback, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useStore } from 'react-redux'
+import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
+import { styled, keyframes } from 'styled-components'
 import { useHapticFeedback } from '@twa.js/sdk-react'
 import { Trash2 } from 'lucide-react'
-import { styled, keyframes } from 'styled-components'
-import { deleteExpense } from '@lowkey-brokey/sdk'
-import { useAppDispatch } from '../use-app-dispatch'
-import { LocalStorage } from '../local-storage'
 import { useBlur } from '../hooks/use-blur-background'
+import { ExpenseOverlay } from './expense-overlay'
+import { BlurDurationInMs } from '../global-style'
 
 enum FocusState {
-  NotFocused = 'NotFocused',
+  Unfocused = 'Unfocused',
   Focusing = 'Focusing',
   Focused = 'Focused',
 }
 
-const LongPressDelay = 420
+const LongDurationInMs = 300
+const LongPressDelayInMs = 100
 
 export function Expense({
   expense,
+  onDelete,
 }: {
   expense: { timestamp: number; datetime: string; amount: number }
+  onDelete: (expenseTimestamp: number) => void
 }) {
-  const store = useStore()
-  const dispatch = useAppDispatch()
   const haptic = useHapticFeedback()
 
   const { blurBackground, unblurBackground } = useBlur()
 
-  const handleDelete = useCallback(() => {
-    dispatch(deleteExpense(expense.timestamp))
-    new LocalStorage().set('brokeyState', store.getState().brokey)
-  }, [store, dispatch, expense])
-
   const rootRef = useRef<HTMLDivElement>(null)
-  const timer = useRef(0)
 
-  const [focusState, setFocusState] = useState<FocusState>(
-    FocusState.NotFocused
-  )
-
-  const focus = useCallback(() => {
-    haptic.impactOccurred('soft')
-    setFocusState(FocusState.Focused)
-    blurBackground()
-  }, [blurBackground, haptic])
+  const [focusState, setFocusState] = useState<FocusState>(FocusState.Unfocused)
 
   const unfocus = useCallback(() => {
+    setFocusState(FocusState.Unfocused)
+  }, [])
+
+  const handleDelete = useCallback(() => {
     unblurBackground()
-    setFocusState(FocusState.NotFocused)
-  }, [unblurBackground])
+    onDelete(expense.timestamp)
+  }, [expense.timestamp, unblurBackground, onDelete])
 
   const handleTouchStart = useCallback(() => {
     setFocusState(FocusState.Focusing)
-    timer.current = setTimeout(focus, LongPressDelay)
-  }, [focus])
+  }, [])
 
   const handleTouchEnd = useCallback(() => {
     if (focusState === FocusState.Focusing) {
-      clearTimeout(timer.current)
-      setFocusState(FocusState.NotFocused)
+      setFocusState(FocusState.Unfocused)
     }
   }, [focusState])
 
-  const handleContextMenu = useCallback<MouseEventHandler>(
-    (event) => {
-      event.preventDefault()
-      focus()
-    },
-    [focus]
-  )
+  const handleContextMenu = useCallback<MouseEventHandler>((event) => {
+    event.preventDefault()
+    setFocusState(FocusState.Focused)
+  }, [])
+
+  useEffect(() => {
+    let timer = 0
+
+    if (focusState === FocusState.Focusing) {
+      // Wait for the long press to finish before setting to focused
+      timer = setTimeout(() => {
+        setFocusState(FocusState.Focused)
+      }, LongDurationInMs + LongPressDelayInMs)
+    }
+
+    return () => {
+      timer && clearTimeout(timer)
+    }
+  }, [focusState])
+
+  useEffect(() => {
+    if (focusState === FocusState.Focused) {
+      blurBackground()
+      haptic.impactOccurred('soft')
+    } else if (focusState === FocusState.Unfocused) {
+      unblurBackground()
+    }
+  }, [focusState, blurBackground, unblurBackground, haptic])
+
+  const [isOverlayVisible, setOverlayVisible] = useState(false)
+
+  useEffect(() => {
+    if (focusState === FocusState.Focused) {
+      setOverlayVisible(true)
+    } else if (focusState === FocusState.Unfocused) {
+      // Wait for the animation to finish before hiding the overlay
+      const timer = setTimeout(() => {
+        setOverlayVisible(false)
+      }, BlurDurationInMs)
+
+      return () => {
+        clearTimeout(timer)
+      }
+    }
+  }, [focusState])
 
   const rootTopRef = useRef(0)
   if (focusState === FocusState.Focused && rootRef.current) {
@@ -90,22 +120,20 @@ export function Expense({
         <DateTime>{expense.datetime}</DateTime>
         <Amount>{expense.amount}</Amount>
       </ExpenseCard>
-      {focusState === FocusState.Focused
-        ? createPortal(
-            <FocusWrapper onClick={unfocus}>
-              <FocusPositioner top={rootTopRef.current}>
-                <DeleteButton onClick={handleDelete}>
-                  Delete <Trash2 size={20} strokeWidth={2.25} />
-                </DeleteButton>
-                <ExpenseCard>
-                  <DateTime>{expense.datetime}</DateTime>
-                  <Amount>{expense.amount}</Amount>
-                </ExpenseCard>
-              </FocusPositioner>
-            </FocusWrapper>,
-            document.getElementById('backdrop-root')!
-          )
-        : null}
+
+      {isOverlayVisible ? (
+        <ExpenseOverlay onUnfocus={unfocus} top={rootTopRef.current}>
+          {focusState === FocusState.Focused ? (
+            <DeleteButton onClick={handleDelete} onTouchEnd={handleDelete}>
+              Delete <Trash2 size={20} strokeWidth={2.25} />
+            </DeleteButton>
+          ) : null}
+          <ExpenseCard>
+            <DateTime>{expense.datetime}</DateTime>
+            <Amount>{expense.amount}</Amount>
+          </ExpenseCard>
+        </ExpenseOverlay>
+      ) : null}
     </>
   )
 }
@@ -126,8 +154,8 @@ const ExpenseCard = styled.div<{ focusState?: FocusState }>`
 
   animation-name: ${(props: { focusState?: FocusState }) =>
     props.focusState === FocusState.Focusing && shrinkAnimation};
-  animation-duration: 0.3s;
-  animation-delay: 0.1s;
+  animation-duration: ${LongDurationInMs}ms;
+  animation-delay: ${LongPressDelayInMs}ms;
   animation-timing-function: ease-in-out;
 `
 
@@ -139,24 +167,6 @@ const DateTime = styled.div`
 const Amount = styled.div`
   font-weight: bold;
   font-size: 18px;
-`
-
-const FocusWrapper = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  padding: 0 25px;
-`
-
-const FocusPositioner = styled.div<{ top: number }>`
-  position: relative;
-  top: ${(props: { top: number }) => props.top}px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
 `
 
 const DeleteButton = styled.button`
