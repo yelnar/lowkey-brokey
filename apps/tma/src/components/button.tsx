@@ -15,7 +15,7 @@ const Root = styled.button`
   max-height: 50px;
   border-radius: 12px;
   background-color: var(--tg-theme-button-color);
-  color: var(--tg-theme-primary-text-color);
+  color: var(--tg-theme-button-text-color);
   font-size: 18px;
   font-weight: bold;
   border: none;
