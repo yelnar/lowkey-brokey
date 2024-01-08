@@ -1,5 +1,11 @@
 # Lowkey Brokey Telegram Mini App
 
+## Credits
+
+- UI/UX designed by **Maira Tokayeva** ([mairatokay@gmail.com](mailto:mairatokay@gmail.com))
+
+- Brilliant [tma.js](https://github.com/Telegram-Mini-Apps/tma.js) built by [Vladislav Kibenko](https://github.com/heyqbnk)
+
 ## Introduction
 
 Welcome to the Lowkey Brokey Telegram Mini App project! This repository contains the source code for an app designed for [Telegram Mini App Contest](https://t.me/contest/327).
