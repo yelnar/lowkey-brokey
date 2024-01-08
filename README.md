@@ -4,7 +4,7 @@
 
 - UI/UX designed by **Maira Tokayeva** ([mairatokay@gmail.com](mailto:mairatokay@gmail.com))
 
-- Brilliant [tma.js](https://github.com/Telegram-Mini-Apps/tma.js) built by [Vladislav Kibenko](https://github.com/heyqbnk)
+- Library [tma.js](https://github.com/Telegram-Mini-Apps/tma.js) built by [Vladislav Kibenko](https://github.com/heyqbnk)
 
 ## Introduction
 
