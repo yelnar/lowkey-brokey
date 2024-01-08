@@ -2,9 +2,17 @@
 
 ## Credits
 
-- UI/UX designed by **Maira Tokayeva** ([mairatokay@gmail.com](mailto:mairatokay@gmail.com))
-
 - Library [tma.js](https://github.com/Telegram-Mini-Apps/tma.js) built by [Vladislav Kibenko](https://github.com/heyqbnk)
+
+- [UI/UX & icon](https://telegra.ph/Lowkey-Brokey-10-15) designed by **Maira Tokayeva** ([mairatokay@gmail.com](mailto:mairatokay@gmail.com))
+
+<div style="display: flex; gap: 10px; overflow-x: auto">
+  <img src="./docs/Main%20Screen.png" width="250" />
+
+<img src="./docs/Delete%20Expense.png" width="250" />
+
+<img src="./docs/Setup Screen.png" width="250" />
+</div>
 
 ## Introduction
 
